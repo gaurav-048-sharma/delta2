@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>abc</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+  }
+  
+  h1 {
+      text-align: center;
+  }
+  
+  form {
+      max-width: 400px;
+      margin: 0 auto;
+  }
+  
+  .ticket-type {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+  }
+  
+  label {
+      flex: 1;
+      margin-right: 10px;
+      text-align: right;
+  }
+  
+  input[type="number"] {
+      width: 50px;
+      text-align: center;
+  }
+  
+  button {
+      width: 30px;
+      height: 30px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+  }
+  
+  button:hover {
+      background-color: #0056b3;
+  }
+  
+  .price {
+      margin-left: 10px;
+  }
+  
+  #totalCost {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-top: 20px;
+  }
+  
+  #submit {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+  }
+  
+  #submit:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+  }
+  
+  </style>
+</head>
+<body>
+  <h1>Ticket Booking</h1>
+    <form id="ticketForm" >
+        <div class="ticket-type">
+            <label for="males">Males:</label>
+            <button class="decrement" data-type="males">-</button>
+            <input type="number" id="males" name="males" min="0" value="0">
+            <button class="increment" data-type="males">+</button>
+            <span class="price">$10 each</span>
+        </div>
+        <div class="ticket-type">
+            <label for="females">Females:</label>
+            <button class="decrement" data-type="females">-</button>
+            <input type="number" id="females" name="females" min="0" value="0">
+            <button class="increment" data-type="females">+</button>
+            <span class="price">$8 each</span>
+        </div>
+        <div class="ticket-type">
+            <label for="couples">Couples:</label>
+            <button class="decrement" data-type="couples">-</button>
+            <input type="number" id="couples" name="couples" min="0" value="0">
+            <button class="increment" data-type="couples">+</button>
+            <span class="price">$20 each</span>
+        </div>
+        <div id="totalCost">Total Cost: $0</div>
+        <button type="submit" id="submit" disabled>Submit</button>
+    </form>
+    <script src="script.js"></script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const incrementButtons = document.querySelectorAll(".increment");
+      const decrementButtons = document.querySelectorAll(".decrement");
+      const ticketInputs = document.querySelectorAll("input[type='number']");
+      const submitButton = document.getElementById("submit");
+      const totalCost = document.getElementById("totalCost");
+  
+      const ticketPrices = {
+          males: 10,
+          females: 8,
+          couples: 20,
+      };
+  
+      function updateTotalCost() {
+          let total = 0;
+  
+          ticketInputs.forEach(input => {
+              const type = input.id;
+              const count = parseInt(input.value);
+              total += count * ticketPrices[type];
+          });
+  
+          totalCost.textContent = `Total Cost: $${total}`;
+          updateSubmitButton();
+      }
+  
+      function updateSubmitButton() {
+          const totalTickets = Array.from(ticketInputs).reduce((acc, input) => acc + parseInt(input.value), 0);
+          submitButton.disabled = totalTickets === 0;
+      }
+  
+      incrementButtons.forEach(button => {
+          button.addEventListener("click", function () {
+              const type = button.getAttribute("data-type");
+              const inputElement = document.getElementById(type);
+  
+              inputElement.value = parseInt(inputElement.value) + 1;
+              updateTotalCost();
+          });
+      });
+  
+      decrementButtons.forEach(button => {
+          button.addEventListener("click", function () {
+              const type = button.getAttribute("data-type");
+              const inputElement = document.getElementById(type);
+  
+              if (parseInt(inputElement.value) > 0) {
+                  inputElement.value = parseInt(inputElement.value) - 1;
+                  updateTotalCost();
+              }
+          });
+      });
+  
+      // Handle form submission
+      document.getElementById("ticketForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          // You can now send the formData to your server for further processing
+          // Example: fetch('/your-server-endpoint', { method: 'POST', body: formData });
+      });
+  
+      // Initial calculation
+      updateTotalCost();
+  });
+  
+  
+  </script>
+</body>
+</html>
